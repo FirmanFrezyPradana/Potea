@@ -325,7 +325,7 @@ export default function App() {
                   Prayer Plant
                 </Text>
                 <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
+                  Rp. 500,000,000
                 </Text>
               </View>
             </View>
