@@ -1,23 +1,88 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
+  FlatList,
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
+  Dimensions
 } from 'react-native';
 import {fontType, colors} from './src/assets/theme';
 import {
   Notification,
-  Receipt21,
-  Clock,
-  Message,
   SearchNormal,
   Heart,
   Filter,
+  StarSlash,
   Star1,
 } from 'iconsax-react-native';
+import {FlowerList, CategoryFlowerList} from './data';
+import {ListHorizontal} from './src/components';
+import ItemSmallVertikal from './src/components/ListSmallVertikal';
+const widthScreen = Dimensions.get("window").width;
+const ItemCategory = ({item, onPress, color}) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View style={category.item}>
+        <Text style={{...category.title, color}}>{item.categoryName}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+const FlatListCategory = () => {
+  const [selected, setSelected] = useState(1);
+  const renderItem = ({item}) => {
+    const color = item.id === selected ? colors.green() : colors.grey();
+    const backgroundColor =
+      item.id === selected ? colors.green() : colors.white;
+    return (
+      <ItemCategory
+        item={item}
+        onPress={() => setSelected(item.id)}
+        color={color}
+        backgroundColor={backgroundColor}
+      />
+    );
+  };
+  return (
+    <FlatList
+      data={CategoryFlowerList}
+      keyExtractor={item => item.id}
+      renderItem={item => renderItem({...item})}
+      ItemSeparatorComponent={() => <View style={{width: 10}} />}
+      contentContainerStyle={{paddingHorizontal: 24}}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    />
+  );
+};
+
+const ListFlower = () => {
+  const horizontalData = FlowerList.slice(0, 4);
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.ListFlower}>
+        <ListHorizontal data={horizontalData} />
+      </View>
+    </ScrollView>
+  );
+};
+const ListSmallFlower = () => {
+  const verticalData = FlowerList.slice();
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={itemVertikal.cardContainer}>
+        {verticalData.map((item, index) => (
+          <ItemSmallVertikal item={item} key={index} widthItem={widthScreen/2} />
+        ))}
+        {/* <ListVertikal data={verticalData} /> */}
+      </View>
+    </ScrollView>
+  );
+};
 export default function App() {
   return (
     <ScrollView>
@@ -57,65 +122,9 @@ export default function App() {
           </Text>
         </View>
         <View style={styles.sizeBox} />
-        <View style={{...itemHorizontal.cardItem, marginRight: 24}}>
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            contentContainerStyle={{gap: 15}}>
-            <View style={itemHorizontal.cardContent}>
-              <View style={itemHorizontal.cardInfo}>
-                <View style={itemHorizontal.cardIcon}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImage}
-                />
-                <Text style={itemHorizontal.cardTitle}>Prayer Plant</Text>
-                <Text style={itemHorizontal.cardPrice}>Rp. 500,000,00</Text>
-              </View>
-            </View>
-            <View style={itemHorizontal.cardContent}>
-              <View style={itemHorizontal.cardInfo}>
-                <View style={itemHorizontal.cardIcon}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImage}
-                />
-                <Text style={itemHorizontal.cardTitle}>Prayer Plant</Text>
-                <Text style={itemHorizontal.cardPrice}>Rp. 500,000,00</Text>
-              </View>
-            </View>
-            <View style={itemHorizontal.cardContent}>
-              <View style={itemHorizontal.cardInfo}>
-                <View style={itemHorizontal.cardIcon}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImage}
-                />
-                <Text style={itemHorizontal.cardTitle}>Prayer Plant</Text>
-                <Text style={itemHorizontal.cardPrice}>Rp. 500,000,00</Text>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
+        <ListFlower />
         <View style={styles.sizeBox} />
+
         <View style={styles.specialOffer}>
           <Text style={{fontSize: 20, fontWeight: '500', color: '#212121'}}>
             Most Popular
@@ -125,216 +134,53 @@ export default function App() {
           </Text>
         </View>
         <View style={category.listCategory}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View
-              style={{
-                ...category.item,
-                backgroundColor: '#01B763',
-              }}>
-              <Text
-                style={{
-                  ...category.title,
-                  color: colors.white(),
-                }}>
-                All
-              </Text>
-            </View>
-            <View style={category.item}>
-              <Text style={category.title}>Monstera</Text>
-            </View>
-            <View style={category.item}>
-              <Text style={category.title}>Aloe</Text>
-            </View>
-            <View style={category.item}>
-              <Text style={category.title}>Palm</Text>
-            </View>
-            <View style={{...category.item, marginRight: 24}}>
-              <Text style={category.title}>Yucca</Text>
-            </View>
-          </ScrollView>
+          <FlatListCategory />
         </View>
-        <View style={itemHorizontal.contentVertical}>
-          <View style={{flexDirection: 'row', width: '100%'}}>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={{flexDirection: 'row', width: '100%'}}>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={{flexDirection: 'row', width: '100%'}}>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={{flexDirection: 'row', width: '100%'}}>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,00
-                </Text>
-              </View>
-            </View>
-            <View style={itemHorizontal.cardContentPopular}>
-              <View style={itemHorizontal.cardInfoPopular}>
-                <View style={itemHorizontal.cardIconPopular}>
-                  <Heart
-                    style={{color: '#01B763'}}
-                    variant="Linear"
-                    size={24}
-                  />
-                </View>
-                <Image
-                  source={require('./src/assets/images/bunga1.png')}
-                  style={itemHorizontal.cardImagePopular}
-                />
-                <Text style={itemHorizontal.cardTitlePopular}>
-                  Prayer Plant
-                </Text>
-                <Text style={itemHorizontal.cardPricePopular}>
-                  Rp. 500,000,0000
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
+        <ListSmallFlower />
       </View>
     </ScrollView>
   );
 }
+const itemVertikal = StyleSheet.create({
+  cardContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 15,
+    justifyContent:'center'
+  },
+  cardRating: {
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    fontSize: 15,
+  },
+  cardIcon: {
+    borderColor: colors.white(),
+    borderRadius: 5,
+    padding: 10,
+    right: 10,
+    position: 'absolute',
+    zIndex: 1,
+  },
+  cardPricePopular: {
+    paddingHorizontal: 15,
+    fontSize: 15,
+    color: '#01B763',
+  },
+  cardImagePopular: {
+    height: 170,
+    width: 170,
+    objectFit: 'contain',
+    backgroundColor: '#F0F0F0',
+    borderRadius: 16,
+  },
+  cardTitlePopular: {
+    marginTop: 10,
+    fontSize: 20,
+    marginHorizontal: 10,
+    fontWeight: 'bold',
+    color: colors.black(),
+  },
+});
 const category = StyleSheet.create({
   listCategory: {
     paddingVertical: 24,
@@ -441,6 +287,10 @@ const itemHorizontal = StyleSheet.create({
   },
 });
 const styles = StyleSheet.create({
+  ListFlower: {
+    paddingVertical: 10,
+    gap: 10,
+  },
   specialOffer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -466,7 +316,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   container: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
   },
   image: {
     width: 48,
