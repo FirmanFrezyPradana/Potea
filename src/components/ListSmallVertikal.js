@@ -11,7 +11,7 @@ import {fontType, colors} from '../assets/theme';
 import {Heart, Star1} from 'iconsax-react-native';
 const ItemSmallVertikal = ({item, variant, onPress, widthItem}) => {
   return (
-    <View style={{...itemVertikal.cardItem,  width : widthItem-40}}>
+    <View style={{...itemVertikal.cardItem, width: widthItem - 40}}>
       <View style={itemVertikal.cardContent}>
         <View style={itemVertikal.cardInfo}>
           <View style={itemVertikal.cardIcon}>
@@ -19,14 +19,16 @@ const ItemSmallVertikal = ({item, variant, onPress, widthItem}) => {
               <Heart style={{color: '#01B763'}} variant={variant} size={24} />
             </TouchableOpacity>
           </View>
-          <Image style={itemVertikal.cardImage} source={item.image} />
-          <Text style={itemVertikal.cardTitle}>{item.title}</Text>
-          <View style={itemVertikal.cardRating}>
-            <Star1 style={{color: '#01B763'}} variant="Linear" size="24" />
-            <Text>4.5 </Text>
-            <Text>44 sold</Text>
+          <View style={itemVertikal.containerContent}>
+            <Image style={itemVertikal.cardImage} source={item.image} />
+            <Text style={itemVertikal.cardTitle}>{item.title}</Text>
+            <View style={itemVertikal.cardRating}>
+              <Star1 style={{color: '#01B763'}} variant="Linear" size="24" />
+              <Text style={{color: '#000000',fontSize: 16}}>{item.star}</Text>
+              <Text style={itemVertikal.soldText}>{item.sold} sold</Text>
+            </View>
+            <Text style={itemVertikal.cardPrice}>Rp.{item.price}</Text>
           </View>
-          <Text style={itemVertikal.cardPrice}>Rp.{item.price}</Text>
         </View>
       </View>
     </View>
@@ -35,28 +37,30 @@ const ItemSmallVertikal = ({item, variant, onPress, widthItem}) => {
 export default ItemSmallVertikal;
 
 const itemVertikal = StyleSheet.create({
-
+  containerContent: {
+    justifyContent: 'space-evenly',
+  },
   cardRating: {
+    alignItems: 'center',
     justifyContent: 'space-around',
     flexDirection: 'row',
     fontSize: 15,
   },
   cardIcon: {
-    borderColor: colors.white(),
-    borderRadius: 5,
-    padding: 10,
-    right: 10,
+    padding: 8,
+    right: 15,
+    top :10,
     position: 'absolute',
     zIndex: 1,
   },
   cardPrice: {
     paddingHorizontal: 15,
-    fontSize: 15,
+    fontSize: 20,
     color: '#01B763',
   },
   cardImage: {
     maxHeight: 170,
-    maxWidth: 150,
+    maxWidth: 160,
     objectFit: 'contain',
     backgroundColor: '#F0F0F0',
     borderRadius: 16,
@@ -67,5 +71,12 @@ const itemVertikal = StyleSheet.create({
     marginHorizontal: 10,
     fontWeight: 'bold',
     color: colors.black(),
+  },
+  soldText: {
+    borderWidth: 1,
+    borderColor: '#01B763',
+    padding: 4,
+    borderRadius: 8,
+    color: '#01B763',
   },
 });

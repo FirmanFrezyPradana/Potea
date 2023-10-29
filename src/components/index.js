@@ -1,3 +1,4 @@
 import ListHorizontal from './ListHorizontal';
 import ListVertikal from './ListSmallVertikal';
-export {ListHorizontal, ListVertikal};
+import ListMyCart from './ListMyCart';
+export {ListHorizontal, ListVertikal, ListMyCart};

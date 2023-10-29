@@ -1,3 +1,12 @@
+export const ProfileData = {
+  image: require('./src/assets/images/img_profile.png'),
+  name: 'Firman Frezy pradana',
+  username : 'Firman',
+  createdAt: '12/07/2023',
+  tanggalLahir : '12/07/1990',
+  telephone: '+62 176 974 0863',
+  email : 'FirmanFrezy13@gmail.com'
+};
 export const CategoryFlowerList = [
   {
     id: 1,
@@ -111,17 +120,6 @@ export const FlowerList = [
   },
   {
     id: 9,
-    title: 'Peperomia',
-    category: '',
-    price: 89000,
-    image: require('./src/assets/images/peperomia.png'),
-    star: 4.9,
-    sold: 60,
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    id: 10,
     title: 'Pilea Peperomioides',
     category: '',
     price: 89000,
@@ -132,7 +130,7 @@ export const FlowerList = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
-    id: 11,
+    id: 10,
     title: 'Sansevieria Trifasciata',
     category: '',
     price: 89000,
@@ -143,7 +141,7 @@ export const FlowerList = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   {
-    id: 12,
+    id: 11,
     title: 'Tigertoothaloe',
     category: '',
     price: 89000,

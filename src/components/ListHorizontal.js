@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {Heart, Receipt21} from 'iconsax-react-native';
-import FastImage from 'react-native-fast-image';
 import {fontType, colors} from '../assets/theme';
 const ItemHorizontal = ({item, variant, onPress}) => {
   return (
