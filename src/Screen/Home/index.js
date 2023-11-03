@@ -23,10 +23,10 @@ import {FlowerList, CategoryFlowerList} from '../../../data';
 import {ListHorizontal} from '../../components';
 import ItemSmallVertikal from '../../components/ListSmallVertikal';
 const widthScreen = Dimensions.get('window').width;
-const ItemCategory = ({item, onPress, color}) => {
+const ItemCategory = ({item, onPress, color, backgroundColor}) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={category.item}>
+      <View style={{...category.item, backgroundColor}}>
         <Text style={{...category.title, color}}>{item.categoryName}</Text>
       </View>
     </TouchableOpacity>
@@ -35,9 +35,9 @@ const ItemCategory = ({item, onPress, color}) => {
 const FlatListCategory = () => {
   const [selected, setSelected] = useState(1);
   const renderItem = ({item}) => {
-    const color = item.id === selected ? colors.green() : colors.grey();
+    const color = item.id === selected ? colors.white() : colors.green();
     const backgroundColor =
-      item.id === selected ? colors.green() : colors.white;
+      item.id === selected ? colors.green() : colors.white();
     return (
       <ItemCategory
         item={item}

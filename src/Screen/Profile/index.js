@@ -4,17 +4,17 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Image
 } from 'react-native';
 import {LogoutCurve, Setting2, Tree} from 'iconsax-react-native';
 import React from 'react';
 import {fontType, colors} from '../../assets/theme';
 import {ProfileData} from '../../../data';
-import {Image} from 'react-native-svg';
 const Profile = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{flexDirection:'row'}}>
+        <View style={{flexDirection: 'row'}}>
           <Tree size="32" color={colors.green()} variant="Broken" />
           <Text style={styles.headerText}>Profile</Text>
         </View>
@@ -30,7 +30,7 @@ const Profile = () => {
         <View style={{gap: 15, alignItems: 'center'}}>
           <Image
             style={styles.image}
-            source={require('../../assets/images/img_profile.png')}
+            source={ProfileData.image}
           />
           <View style={{gap: 5, alignItems: 'center'}}>
             <Text style={profile.name}>{ProfileData.name}</Text>
@@ -73,8 +73,8 @@ const Profile = () => {
     </View>
   );
 };
-
 export default Profile;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     color: colors.black(),
     fontFamily: fontType['Pjs-ExtraBold'],
     fontSize: 23,
-    paddingHorizontal : 10
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: 20,
@@ -141,7 +141,7 @@ const profile = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    paddingHorizontal : 10,
+    paddingHorizontal: 10,
     fontSize: 14,
     fontFamily: fontType['Pjs-SemiBold'],
     color: colors.white(),

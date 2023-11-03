@@ -7,11 +7,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {fontType, colors} from '../assets/theme';
+import {colors} from '../assets/theme';
 import {Heart, Star1} from 'iconsax-react-native';
+import {useNavigation} from '@react-navigation/native';
+
 const ItemSmallVertikal = ({item, variant, onPress, widthItem}) => {
+  const navigation = useNavigation();
   return (
-    <View style={{...itemVertikal.cardItem, width: widthItem - 40}}>
+    <TouchableOpacity
+      style={{width: widthItem - 40}}
+      onPress={() => navigation.navigate('FlowerDetail', {flowerId: item.id})}>
       <View style={itemVertikal.cardContent}>
         <View style={itemVertikal.cardInfo}>
           <View style={itemVertikal.cardIcon}>
@@ -24,14 +29,14 @@ const ItemSmallVertikal = ({item, variant, onPress, widthItem}) => {
             <Text style={itemVertikal.cardTitle}>{item.title}</Text>
             <View style={itemVertikal.cardRating}>
               <Star1 style={{color: '#01B763'}} variant="Linear" size="24" />
-              <Text style={{color: '#000000',fontSize: 16}}>{item.star}</Text>
+              <Text style={{color: '#000000', fontSize: 16}}>{item.star}</Text>
               <Text style={itemVertikal.soldText}>{item.sold} sold</Text>
             </View>
             <Text style={itemVertikal.cardPrice}>Rp.{item.price}</Text>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default ItemSmallVertikal;
@@ -49,7 +54,7 @@ const itemVertikal = StyleSheet.create({
   cardIcon: {
     padding: 8,
     right: 15,
-    top :10,
+    top: 10,
     position: 'absolute',
     zIndex: 1,
   },

@@ -1,11 +1,11 @@
 export const ProfileData = {
   image: require('./src/assets/images/img_profile.png'),
   name: 'Firman Frezy pradana',
-  username : 'Firman',
+  username: 'Firman',
   createdAt: '12/07/2023',
-  tanggalLahir : '12/07/1990',
+  tanggalLahir: '12/07/1990',
   telephone: '+62 176 974 0863',
-  email : 'FirmanFrezy13@gmail.com'
+  email: 'FirmanFrezy13@gmail.com',
 };
 export const CategoryFlowerList = [
   {

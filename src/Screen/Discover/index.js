@@ -156,6 +156,4 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
   },
-
-
 });

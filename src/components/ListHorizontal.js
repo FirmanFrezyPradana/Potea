@@ -9,9 +9,13 @@ import {
 import React, {useState} from 'react';
 import {Heart, Receipt21} from 'iconsax-react-native';
 import {fontType, colors} from '../assets/theme';
+import {useNavigation} from '@react-navigation/native';
 const ItemHorizontal = ({item, variant, onPress}) => {
+  const navigation = useNavigation();
   return (
-    <View style={itemHorizontal.cardItem}>
+    <TouchableOpacity
+      style={itemHorizontal.cardItem}
+      onPress={() => navigation.navigate('FlowerDetail', {flowerId: item.id})}>
       <View style={itemHorizontal.cardContent}>
         <View style={itemHorizontal.cardInfo}>
           <View style={itemHorizontal.cardIcon}>
@@ -24,7 +28,7 @@ const ItemHorizontal = ({item, variant, onPress}) => {
           <Text style={itemHorizontal.cardPrice}>Rp.{item.price}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 const ListHorizontal = ({data}) => {

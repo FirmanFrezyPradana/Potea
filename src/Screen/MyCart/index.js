@@ -12,7 +12,7 @@ import {FlowerList} from '../../../data';
 import ItemMyCart from '../../components/ListMyCart';
 
 const ListSmallMyCart = () => {
-  const verticalData = FlowerList.slice(0,4);
+  const verticalData = FlowerList.slice(0, 4);
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.listBlog}>
@@ -46,8 +46,8 @@ const MyCart = () => {
     </View>
   );
 };
-
 export default MyCart;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

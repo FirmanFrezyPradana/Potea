@@ -1,16 +1,10 @@
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
-import {
-  Receipt21,
-  Clock,
-  Message,
-  Trash,
-  Add,
-  Minus,
-} from 'iconsax-react-native';
-import React from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Trash, Add, Minus} from 'iconsax-react-native';
+import React, { useState } from 'react';
 import {fontType, colors} from '../assets/theme';
 
 const ItemMyCart = ({item}) => {
+  const [quantity, setQuantity] = useState(0);
   return (
     <View style={styles.cardItem}>
       <Image style={styles.cardImage} source={item.image} />
@@ -26,12 +20,21 @@ const ItemMyCart = ({item}) => {
           <Trash size={30} style={styles.iconTrsh} variant="Linear" />
         </View>
         <View style={styles.cardPlus}>
-          <Minus size={25} variant="Linear" color={colors.green()} />
+          <TouchableOpacity onPress={() => setQuantity(quantity - 1)}>
+            <Minus size={25} variant="Linear" color={colors.green()} />
+          </TouchableOpacity>
           <Text
-            style={{fontSize: 20, fontWeight: 'bold', marginHorizontal: 10,color:colors.green()}}>
-            1
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              marginHorizontal: 10,
+              color: colors.green(),
+            }}>
+            {quantity}
           </Text>
-          <Add size={25} variant="Linear" color={colors.green()} />
+          <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
+            <Add size={25} variant="Linear" color={colors.green()} />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
