@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   FlatList,
-  Image,
+  Animated,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,7 +10,7 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-import {fontType, colors} from '../../assets/theme';
+import {colors} from '../../assets/theme';
 import {
   Notification,
   SearchNormal,
@@ -20,7 +20,6 @@ import {
   Star1,
 } from 'iconsax-react-native';
 import {FlowerList, CategoryFlowerList} from '../../../data';
-import {ListHorizontal} from '../../components';
 import ItemSmallVertikal from '../../components/ListSmallVertikal';
 const widthScreen = Dimensions.get('window').width;
 const ItemCategory = ({item, onPress, color}) => {
@@ -76,29 +75,42 @@ const ListSmallFlower = () => {
   );
 };
 export default function Discover() {
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const diffClampY = Animated.diffClamp(scrollY, 0, 142);
+  const recentY = diffClampY.interpolate({
+    inputRange: [0, 120],
+    outputRange: [0, -120],
+    extrapolate: 'clamp',
+  });
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* sizeBox diubah ketinggia */}
-        <View style={styles.sizeBox} />
-        <View style={styles.box}>
-          <View style={styles.boxSearch}>
-            <SearchNormal size={24} color="#BDBDBD" />
-            <TextInput size={14} style={{left: 10}} placeholder="Search" />
-          </View>
-          <Filter size={24} color="#01B763" />
+    <View style={styles.container}>
+      {/* sizeBox diubah ketinggia */}
+      <View style={styles.sizeBox} />
+      <View style={styles.box}>
+        <View style={styles.boxSearch}>
+          <SearchNormal size={24} color="#BDBDBD" />
+          <TextInput size={14} style={{left: 10}} placeholder="Search" />
         </View>
-        <View style={styles.specialOffer}>
-          <Text style={{fontSize: 18, fontWeight: 'bold', color: '#212121'}}>
-            Recent Search
-          </Text>
-        </View>
+        <Filter size={24} color="#01B763" />
+      </View>
+      <Animated.View
+        style={[category.container, {transform: [{translateY: recentY}]}]}>
+        <Text style={{fontSize: 18, fontWeight: 'bold', color: '#212121'}}>
+          Recent Search
+        </Text>
         <View style={category.listCategory}>
           <FlatListCategory />
         </View>
+      </Animated.View>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {useNativeDriver: true},
+        )} contentContainerStyle={{paddingTop: 120}}>
         <ListSmallFlower />
-      </View>
-    </ScrollView>
+      </Animated.ScrollView>
+    </View>
   );
 }
 const itemVertikal = StyleSheet.create({
@@ -127,6 +139,15 @@ const category = StyleSheet.create({
     lineHeight: 18,
     color: '#01B763',
   },
+  container: {
+    paddingHorizontal : 25,
+    position: 'absolute',
+    zIndex: 999,
+    top: 52,
+    left: 0,
+    right: 0,
+    elevation: 1000,
+  },
 });
 const styles = StyleSheet.create({
   ListFlower: {
@@ -142,6 +163,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 20,
     justifyContent: 'space-between',
+    paddingTop: 8,
+    paddingBottom: 4,
+    position: 'absolute',
+    top: 0,
+    zIndex: 1000,
+    right: 0,
+    left: 0,
   },
   boxSearch: {
     height: 56,
