@@ -3,4 +3,6 @@ import Discover from './Discover';
 import Profile from './Profile';
 import MyCart from './MyCart';
 import FlowerDetail from './FlowerDetail';
-export {Home, Discover, Profile, MyCart, FlowerDetail};
+import Search from './Search';
+import AddFlowerForm from './AddFlowerForm';
+export {Home, Discover, Profile, MyCart, FlowerDetail, Search,AddFlowerForm};

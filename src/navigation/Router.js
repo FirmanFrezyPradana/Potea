@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, Discover, Profile, MyCart, FlowerDetail} from '../Screen';
+import {Home, Discover, Profile, MyCart, FlowerDetail, Search,AddFlowerForm} from '../Screen';
 import {
   Home2,
   LocationDiscover,
@@ -104,6 +104,26 @@ const Router = () => {
       <Stack.Screen
         name="FlowerDetail"
         component={FlowerDetail}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="SearchPage"
+        component={Search}
+        options={{
+          headerShown: false,
+          presentation: 'transparentModal',
+        }}
+      />
+      <Stack.Screen
+        name="AddFlower"
+        component={AddFlowerForm}
         options={{
           headerShown: false,
           animationEnabled: true,

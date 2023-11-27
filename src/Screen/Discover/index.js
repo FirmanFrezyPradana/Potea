@@ -9,18 +9,13 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {colors} from '../../assets/theme';
-import {
-  Notification,
-  SearchNormal,
-  Heart,
-  Filter,
-  StarSlash,
-  Star1,
-} from 'iconsax-react-native';
+import {SearchNormal, Filter} from 'iconsax-react-native';
 import {FlowerList, CategoryFlowerList} from '../../../data';
 import ItemSmallVertikal from '../../components/ListSmallVertikal';
+import {useNavigation} from '@react-navigation/native';
 const widthScreen = Dimensions.get('window').width;
 const ItemCategory = ({item, onPress, color}) => {
   return (
@@ -82,16 +77,19 @@ export default function Discover() {
     outputRange: [0, -120],
     extrapolate: 'clamp',
   });
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       {/* sizeBox diubah ketinggia */}
       <View style={styles.sizeBox} />
       <View style={styles.box}>
-        <View style={styles.boxSearch}>
-          <SearchNormal size={24} color="#BDBDBD" />
-          <TextInput size={14} style={{left: 10}} placeholder="Search" />
-        </View>
-        <Filter size={24} color="#01B763" />
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate('SearchPage')}>
+          <View style={styles.boxSearch}>
+            <SearchNormal size={24} color="#BDBDBD" />
+            <TextInput size={14} style={{left: 10}} placeholder="Search" />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
       <Animated.View
         style={[category.container, {transform: [{translateY: recentY}]}]}>
@@ -107,7 +105,8 @@ export default function Discover() {
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],
           {useNativeDriver: true},
-        )} contentContainerStyle={{paddingTop: 120}}>
+        )}
+        contentContainerStyle={{paddingTop: 120}}>
         <ListSmallFlower />
       </Animated.ScrollView>
     </View>
@@ -140,7 +139,7 @@ const category = StyleSheet.create({
     color: '#01B763',
   },
   container: {
-    paddingHorizontal : 25,
+    paddingHorizontal: 25,
     position: 'absolute',
     zIndex: 999,
     top: 52,

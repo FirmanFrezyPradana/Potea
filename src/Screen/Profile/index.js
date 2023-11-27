@@ -4,13 +4,22 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Image
+  Image,
 } from 'react-native';
-import {LogoutCurve, Setting2, Tree} from 'iconsax-react-native';
+import {
+  LogoutCurve,
+  Setting2,
+  Tree,
+  AddSquare,
+} from 'iconsax-react-native';
 import React from 'react';
 import {fontType, colors} from '../../assets/theme';
 import {ProfileData} from '../../../data';
+
+import {useNavigation} from '@react-navigation/native';
+
 const Profile = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -28,10 +37,7 @@ const Profile = () => {
           paddingVertical: 20,
         }}>
         <View style={{gap: 15, alignItems: 'center'}}>
-          <Image
-            style={styles.image}
-            source={ProfileData.image}
-          />
+          <Image style={styles.image} source={ProfileData.image} />
           <View style={{gap: 5, alignItems: 'center'}}>
             <Text style={profile.name}>{ProfileData.name}</Text>
             <Text style={profile.info}>
@@ -70,6 +76,12 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('AddFlower')}>
+        <AddSquare color={colors.white()} variant="Linear" size={20} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -114,6 +126,24 @@ const styles = StyleSheet.create({
   itemProfile: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+
+  floatingButton: {
+    backgroundColor: colors.green(),
+    padding: 15,
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    borderRadius: 50,
+    shadowColor: colors.blue(),
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   },
 });
 const profile = StyleSheet.create({
