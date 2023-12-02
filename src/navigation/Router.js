@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, Discover, Profile, MyCart, FlowerDetail, Search,AddFlowerForm} from '../Screen';
+import {Home, Discover, Profile, MyCart, FlowerDetail, Search,AddFlowerForm, EditFlowerForm} from '../Screen';
 import {
   Home2,
   LocationDiscover,
@@ -64,7 +64,7 @@ function MainApp() {
         name="Cart"
         component={MyCart}
         options={{
-          tabBarLabel: 'Cart',
+          tabBarLabel: 'Cart/Add',
           tabBarIcon: ({focused, color}) => (
             <Bag2
               color={color}
@@ -124,6 +124,18 @@ const Router = () => {
       <Stack.Screen
         name="AddFlower"
         component={AddFlowerForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="EditFlower"
+        component={EditFlowerForm}
         options={{
           headerShown: false,
           animationEnabled: true,

@@ -5,18 +5,15 @@ import {
   View,
   TouchableOpacity,
   Image,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import {
-  LogoutCurve,
-  Setting2,
-  Tree,
-  AddSquare,
-} from 'iconsax-react-native';
-import React from 'react';
+import {LogoutCurve, Setting2, Tree, AddSquare} from 'iconsax-react-native';
+import React, {useState, useCallback} from 'react';
 import {fontType, colors} from '../../assets/theme';
 import {ProfileData} from '../../../data';
-
-import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -76,7 +73,6 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => navigation.navigate('AddFlower')}>

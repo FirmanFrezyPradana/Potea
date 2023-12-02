@@ -1,13 +1,22 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Trash, Add, Minus} from 'iconsax-react-native';
-import React, { useState } from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {fontType, colors} from '../assets/theme';
-
+import FastImage from 'react-native-fast-image';
+import {useNavigation} from '@react-navigation/native';
 const ItemMyCart = ({item}) => {
-  const [quantity, setQuantity] = useState(0);
+  const navigation = useNavigation();
   return (
-    <View style={styles.cardItem}>
-      <Image style={styles.cardImage} source={item.image} />
+    <TouchableOpacity
+      style={styles.cardItem}
+      onPress={() => navigation.navigate('FlowerDetail', {FlowerId: item.id})}>
+      <FastImage
+        style={styles.pic}
+        source={{
+          uri: item?.image,
+          headers: {Authorization: 'someAuthToken'},
+          priority: FastImage.priority.high,
+        }}
+        resizeMode={FastImage.resizeMode.cover}
+      />
       <View style={styles.cardContent}>
         <View
           style={{
@@ -16,33 +25,17 @@ const ItemMyCart = ({item}) => {
           <View style={{gap: 5, flex: 1}}>
             <Text style={styles.cardTitle}>{item.title}</Text>
             <Text style={styles.cardPrice}>Rp. {item.price}</Text>
+            <Text style={styles.cardcategory}>{item.category?.name}</Text>
           </View>
-          <Trash size={30} style={styles.iconTrsh} variant="Linear" />
-        </View>
-        <View style={styles.cardPlus}>
-          <TouchableOpacity onPress={() => setQuantity(quantity - 1)}>
-            <Minus size={25} variant="Linear" color={colors.green()} />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              marginHorizontal: 10,
-              color: colors.green(),
-            }}>
-            {quantity}
-          </Text>
-          <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
-            <Add size={25} variant="Linear" color={colors.green()} />
-          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
-
 export default ItemMyCart;
+
 const styles = StyleSheet.create({
+  pic: {width: 100, height: 100, borderRadius: 15},
   listCard: {
     paddingHorizontal: 24,
     paddingVertical: 10,
@@ -80,14 +73,13 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     backgroundColor: colors.grey(0.1),
   },
-  cardPlus: {
-    flexDirection: 'row',
-    gap: 5,
-    alignItems: 'center',
-    width: 90,
-    padding: 10,
+  cardcategory: {
+    textAlign: 'center',
+    width: 70,
+    height: 25,
     borderRadius: 20,
-    backgroundColor: '#F8F8F8',
+    color: colors.white(),
+    backgroundColor: colors.green(),
   },
   cardContent: {
     gap: 10,

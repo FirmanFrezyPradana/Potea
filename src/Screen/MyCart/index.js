@@ -4,22 +4,63 @@ import {
   Text,
   View,
   TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {SearchNormal1, Tree} from 'iconsax-react-native';
-import React from 'react';
+import React, {useState, useCallback} from 'react';
 import {fontType, colors} from '../../assets/theme';
 import {FlowerList} from '../../../data';
 import ItemMyCart from '../../components/ListMyCart';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import axios from 'axios';
 
 const ListSmallMyCart = () => {
-  const verticalData = FlowerList.slice(0, 4);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [FlowerData, setFlowerData] = useState([]);
+  const getDataFlower = async () => {
+    try {
+      const response = await axios.get(
+        'https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower',
+      );
+      setFlowerData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getDataFlower();
+      setRefreshing(false);
+    }, 1500);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getDataFlower();
+    }, []),
+  );
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View style={styles.listBlog}>
         <View style={styles.listCard}>
-          {verticalData.map((item, index) => (
-            <ItemMyCart item={item} key={index} />
-          ))}
+          <View style={{paddingVertical: 10, gap: 10}}>
+            {loading ? (
+              <ActivityIndicator size={'large'} color={colors.blue()} />
+            ) : (
+              FlowerData.map((item, index) => (
+                <ItemMyCart item={item} key={index} />
+              ))
+            )}
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -40,7 +81,8 @@ const MyCart = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingVertical: 20,
-        }}>
+        }}
+        >
         <ListSmallMyCart />
       </ScrollView>
     </View>

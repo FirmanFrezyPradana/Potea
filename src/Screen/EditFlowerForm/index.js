@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,8 @@ import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../assets/theme';
 import axios from 'axios';
 
-const AddFlowerForm = () => {
+const EditFlowerForm = ({route}) => {
+  const {FlowerId} = route.params;
   const dataCategory = [
     {id: 1, name: 'Monstera'},
     {id: 2, name: 'Aloe'},
@@ -41,20 +42,47 @@ const AddFlowerForm = () => {
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    getFlowerById();
+  }, [FlowerId]);
+
+  const getFlowerById = async () => {
+    try {
+      const response = await axios.get(
+        `https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower/${FlowerId}`,
+      );
+      setFlowerData({
+        title: response.data.title,
+        price: response.data.price,
+        category: {
+          id: response.data.category.id,
+          name: response.data.category.name,
+        },
+        description: response.data.description,
+      });
+      setImage(response.data.image);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleUpload = async () => {
     setLoading(true);
     try {
       await axios
-        .post('https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower', {
-          title: FlowerData.title,
-          category: FlowerData.category,
-          price: FlowerData.price,
-          totalStar: FlowerData.totalStar,
-          totalSold: FlowerData.totalSold,
-          description: FlowerData.description,
-          image,
-          createdAt: new Date(),
-        })
+        .put(
+          `https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower/${FlowerId}`,
+          {
+            title: FlowerData.title,
+            category: FlowerData.category,
+            price: FlowerData.price,
+            image,
+            totalStar: FlowerData.totalStar,
+            totalSold: FlowerData.totalSold,
+            description: FlowerData.description,
+          },
+        )
         .then(function (response) {
           console.log(response);
         })
@@ -67,6 +95,7 @@ const AddFlowerForm = () => {
       console.log(e);
     }
   };
+  console.log(FlowerId);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -164,7 +193,8 @@ const AddFlowerForm = () => {
     </View>
   );
 };
-export default AddFlowerForm;
+
+export default EditFlowerForm;
 
 const styles = StyleSheet.create({
   container: {
@@ -189,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white(),
     alignItems: 'flex-end',
     paddingHorizontal: 24,
-    paddingVertical: 30,
+    paddingVertical: 20,
     shadowColor: colors.black(),
     shadowOffset: {
       width: 0,

@@ -4,7 +4,7 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Image,
+  Animated,
 } from 'react-native';
 import {
   Add,
@@ -12,32 +12,128 @@ import {
   Bag2,
   HeartCircle,
   Minus,
+  More,
+  Share,
   Star1,
 } from 'iconsax-react-native';
-import React, {useState} from 'react';
 import {fontType, colors} from '../../assets/theme';
 import {FlowerList} from '../../../data';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import React, {useState, useRef, useEffect} from 'react';
+import ActionSheet from 'react-native-actions-sheet';
+import FastImage from 'react-native-fast-image';
 
 const DetailFlower = ({route}) => {
-  const {flowerId} = route.params;
-  const selectedFlower = FlowerList.find(flower => flower.id === flowerId);
+  const {FlowerId} = route.params;
+  // const selectedFlower = FlowerList.find(flower => flower.id === FlowerId);
   const navigation = useNavigation();
   const [quantity, setQuantity] = useState(1);
+
+  const [selectedFlower, setSelectedFlower] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const actionSheetRef = useRef(null);
+
+  const openActionSheet = () => {
+    actionSheetRef.current?.show();
+  };
+
+  const closeActionSheet = () => {
+    actionSheetRef.current?.hide();
+  };
+
+  useEffect(() => {
+    getFlowerById();
+  }, [FlowerId]);
+
+  const getFlowerById = async () => {
+    try {
+      const response = await axios.get(
+        `https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower/${FlowerId}`,
+      );
+      setSelectedFlower(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const navigateEdit = () => {
+    closeActionSheet();
+    navigation.navigate('EditFlower', {FlowerId});
+  };
+  const handleDelete = async () => {
+    await axios
+      .delete(
+        `https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower/${FlowerId}`,
+      )
+      .then(() => {
+        closeActionSheet();
+        navigation.navigate('Cart');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const diffClampY = Animated.diffClamp(scrollY, 0, 52);
+  const headerY = diffClampY.interpolate({
+    inputRange: [0, 52],
+    outputRange: [0, -52],
+  });
+  const bottomBarY = diffClampY.interpolate({
+    inputRange: [0, 52],
+    outputRange: [0, 52],
+  });
+
+  const toggleIcon = iconName => {
+    setIconStates(prevStates => ({
+      ...prevStates,
+      [iconName]: {
+        variant: prevStates[iconName].variant === 'Linear' ? 'Bold' : 'Linear',
+        color:
+          prevStates[iconName].variant === 'Linear'
+            ? colors.blue()
+            : colors.grey(0.6),
+      },
+    }));
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View
+        style={[styles.header, {transform: [{translateY: headerY}]}]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.green()} variant="Linear" size={30} />
+          <ArrowLeft color={colors.grey(0.6)} variant="Linear" size={24} />
         </TouchableOpacity>
-      </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20}}>
+          <Share color={colors.grey(0.6)} variant="Linear" size={24} />
+          <TouchableOpacity onPress={openActionSheet}>
+            <More
+              color={colors.grey(0.6)}
+              variant="Linear"
+              style={{transform: [{rotate: '90deg'}]}}
+            />
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 62,
           paddingBottom: 54,
         }}>
-        <Image style={styles.image} source={selectedFlower.image} />
+        <FastImage
+          style={styles.image}
+          source={{
+            uri: selectedFlower?.image,
+            headers: {Authorization: 'someAuthToken'},
+            priority: FastImage.priority.high,
+          }}
+          resizeMode={FastImage.resizeMode.cover}></FastImage>
+        {/* <Image style={styles.image} source={selectedFlower.image} /> */}
         <View
           style={{
             backgroundColor: '#f3f6f4',
@@ -50,7 +146,7 @@ const DetailFlower = ({route}) => {
               marginTop: 15,
               alignItems: 'center',
             }}>
-            <Text style={styles.title}>{selectedFlower.title}</Text>
+            <Text style={styles.title}>{selectedFlower?.title}</Text>
             <HeartCircle size="30" color="#01B763" variant="Outline" />
           </View>
           <View
@@ -61,10 +157,10 @@ const DetailFlower = ({route}) => {
               width: 130,
               alignItems: 'center',
             }}>
-            <Text style={styles.soldText}>{selectedFlower.sold} sold</Text>
+            <Text style={styles.soldText}>{selectedFlower?.sold} sold</Text>
             <Star1 style={{color: '#01B763'}} variant="Linear" size="24" />
             <Text style={{color: '#000000', fontSize: 16}}>
-              {selectedFlower.star}
+              {selectedFlower?.star}
             </Text>
           </View>
           <Text
@@ -75,7 +171,7 @@ const DetailFlower = ({route}) => {
             }}>
             Description
           </Text>
-          <Text style={styles.description}>{selectedFlower.description}</Text>
+          <Text style={styles.description}>{selectedFlower?.description}</Text>
           <View
             style={{
               flexDirection: 'row',
@@ -118,7 +214,9 @@ const DetailFlower = ({route}) => {
       <View style={styles.bottomBar}>
         <View>
           <Text>Total Price</Text>
-          <Text style={{fontWeight: '800', fontSize: 20}}>Rp90.0000</Text>
+          <Text style={{fontWeight: '800', fontSize: 20}}>
+            Rp.{selectedFlower?.price}
+          </Text>
         </View>
         <TouchableOpacity
           style={{
@@ -141,6 +239,66 @@ const DetailFlower = ({route}) => {
           </Text>
         </TouchableOpacity>
       </View>
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+        }}
+        indicatorStyle={{
+          width: 100,
+        }}
+        gestureEnabled={true}
+        defaultOverlayOpacity={0.3}>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={navigateEdit}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
+              fontSize: 18,
+            }}>
+            Edit
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={handleDelete}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
+              fontSize: 18,
+            }}>
+            Delete
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={closeActionSheet}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: 'red',
+              fontSize: 18,
+            }}>
+            Cancel
+          </Text>
+        </TouchableOpacity>
+      </ActionSheet>
     </View>
   );
 };
@@ -182,7 +340,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 400,
-    borderRadius: 15,
     resizeMode: 'contain',
   },
   info: {
