@@ -17,16 +17,15 @@ import {
   Star1,
 } from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
-import {FlowerList} from '../../../data';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 import React, {useState, useRef, useEffect} from 'react';
 import ActionSheet from 'react-native-actions-sheet';
 import FastImage from 'react-native-fast-image';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 const DetailFlower = ({route}) => {
   const {FlowerId} = route.params;
-  // const selectedFlower = FlowerList.find(flower => flower.id === FlowerId);
   const navigation = useNavigation();
   const [quantity, setQuantity] = useState(1);
 
@@ -44,39 +43,48 @@ const DetailFlower = ({route}) => {
   };
 
   useEffect(() => {
-    getFlowerById();
+    const subscriber = firestore()
+      .collection('flower')
+      .doc(FlowerId)
+      .onSnapshot(documentSnapshot => {
+        const flowerData = documentSnapshot.data();
+        if (flowerData) {
+          console.log('flower data: ', flowerData);
+          setSelectedFlower(flowerData);
+        } else {
+          console.log(`flower with ID ${FlowerId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
   }, [FlowerId]);
-
-  const getFlowerById = async () => {
-    try {
-      const response = await axios.get(
-        `https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower/${FlowerId}`,
-      );
-      setSelectedFlower(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const navigateEdit = () => {
     closeActionSheet();
     navigation.navigate('EditFlower', {FlowerId});
   };
   const handleDelete = async () => {
-    await axios
-      .delete(
-        `https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower/${FlowerId}`,
-      )
-      .then(() => {
-        closeActionSheet();
-        navigation.navigate('Cart');
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    setLoading(true);
+    try {
+      await firestore()
+        .collection('flower')
+        .doc(FlowerId)
+        .delete()
+        .then(() => {
+          console.log('Flower deleted!');
+        });
+      if (selectedFlower?.image) {
+        const imageRef = storage().refFromURL(selectedFlower?.image);
+        await imageRef.delete();
+      }
+      console.log('Blog deleted!');
+      closeActionSheet();
+      setSelectedFlower(null);
+      setLoading(false);
+      navigation.navigate('Cart');
+    } catch (error) {
+      console.error(error);
+    }
   };
-
   const scrollY = useRef(new Animated.Value(0)).current;
   const diffClampY = Animated.diffClamp(scrollY, 0, 52);
   const headerY = diffClampY.interpolate({
@@ -133,7 +141,6 @@ const DetailFlower = ({route}) => {
             priority: FastImage.priority.high,
           }}
           resizeMode={FastImage.resizeMode.cover}></FastImage>
-        {/* <Image style={styles.image} source={selectedFlower.image} /> */}
         <View
           style={{
             backgroundColor: '#f3f6f4',

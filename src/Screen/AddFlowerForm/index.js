@@ -8,10 +8,13 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {ArrowLeft, Tree} from 'iconsax-react-native';
+import {Add, AddSquare, ArrowLeft, Tree} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../assets/theme';
-import axios from 'axios';
+import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+import FastImage from 'react-native-fast-image';
 
 const AddFlowerForm = () => {
   const dataCategory = [
@@ -41,31 +44,49 @@ const AddFlowerForm = () => {
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+
   const handleUpload = async () => {
+    let filename = image.substring(image.lastIndexOf('/') + 1);
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+    const reference = storage().ref(`flowerimages/${filename}`);
+
     setLoading(true);
     try {
-      await axios
-        .post('https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower', {
-          title: FlowerData.title,
-          category: FlowerData.category,
-          price: FlowerData.price,
-          totalStar: FlowerData.totalStar,
-          totalSold: FlowerData.totalSold,
-          description: FlowerData.description,
-          image,
-          createdAt: new Date(),
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      await reference.putFile(image);
+      const url = await reference.getDownloadURL();
+      await firestore().collection('flower').add({
+        title: FlowerData.title,
+        category: FlowerData.category,
+        price: FlowerData.price,
+        totalStar: FlowerData.totalStar,
+        totalSold: FlowerData.totalSold,
+        description: FlowerData.description,
+        image: url,
+        createdAt: new Date(),
+      });
       setLoading(false);
+      console.log('flower added!');
       navigation.navigate('Cart');
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(error);
     }
+  };
+
+  const handleImagePick = async () => {
+    ImagePicker.openPicker({
+      width: 1920,
+      height: 1800,
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        setImage(image.path);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
   return (
     <View style={styles.container}>
@@ -105,14 +126,58 @@ const AddFlowerForm = () => {
           />
         </View>
         <Text style={styles.title}>Image</Text>
-        <View style={[textInput.borderDashed]}>
-          <TextInput
-            value={image}
-            onChangeText={text => setImage(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            style={textInput.title}
-          />
-        </View>
+        {image ? (
+          <View style={{position: 'relative'}}>
+            <FastImage
+              style={{width: '100%', height: 127, borderRadius: 5}}
+              source={{
+                uri: image,
+                headers: {Authorization: 'someAuthToken'},
+                priority: FastImage.priority.high,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: -5,
+                right: -5,
+                backgroundColor: colors.blue(),
+                borderRadius: 25,
+              }}
+              onPress={() => setImage(null)}>
+              <Add
+                size={20}
+                variant="Linear"
+                color={colors.white()}
+                style={{transform: [{rotate: '45deg'}]}}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity onPress={handleImagePick}>
+            <View
+              style={[
+                textInput.borderDashed,
+                {
+                  gap: 10,
+                  paddingVertical: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                },
+              ]}>
+              <AddSquare color={colors.grey(0.6)} variant="Linear" size={42} />
+              <Text
+                style={{
+                  fontFamily: fontType['Pjs-Regular'],
+                  fontSize: 12,
+                  color: colors.grey(0.6),
+                }}>
+                Upload Thumbnail
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
         <Text style={styles.title}>Category</Text>
         <View style={{}}>
           <View style={category.container}>

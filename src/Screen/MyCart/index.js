@@ -8,42 +8,49 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {SearchNormal1, Tree} from 'iconsax-react-native';
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {fontType, colors} from '../../assets/theme';
-import {FlowerList} from '../../../data';
 import ItemMyCart from '../../components/ListMyCart';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
 
 const ListSmallMyCart = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [FlowerData, setFlowerData] = useState([]);
-  const getDataFlower = async () => {
-    try {
-      const response = await axios.get(
-        'https://65656c68eb8bb4b70ef185f2.mockapi.io/wocoapp/Flower',
-      );
-      setFlowerData(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('flower')
+      .onSnapshot(querySnapshot => {
+        const flowers = [];
+        querySnapshot.forEach(documentSnapshot => {
+          flowers.push({
+            ...documentSnapshot.data(),
+            id: documentSnapshot.id,
+          });
+        });
+        setFlowerData(flowers);
+        setLoading(false);
+      });
+    return () => subscriber();
+  }, []);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataFlower();
+      firestore()
+        .collection('flower')
+        .onSnapshot(querySnapshot => {
+          const flowers = [];
+          querySnapshot.forEach(documentSnapshot => {
+            flowers.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setFlowerData(flowers);
+        });
       setRefreshing(false);
     }, 1500);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getDataFlower();
-    }, []),
-  );
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -66,7 +73,6 @@ const ListSmallMyCart = () => {
     </ScrollView>
   );
 };
-
 const MyCart = () => {
   return (
     <View style={styles.container}>
@@ -81,8 +87,7 @@ const MyCart = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingVertical: 20,
-        }}
-        >
+        }}>
         <ListSmallMyCart />
       </ScrollView>
     </View>

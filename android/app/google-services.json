@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1032746014237",
+    "project_id": "poteaapp",
+    "storage_bucket": "poteaapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032746014237:android:7eb4a89db99988006318f4",
+        "android_client_info": {
+          "package_name": "com.potea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_B2OgkuKJyIEjK7XZiOqbuN_V6vffOww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
