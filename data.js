@@ -152,3 +152,14 @@ export const FlowerList = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
 ];
+
+export const Logo = [
+  {
+    id: 1,
+    image: require('./src/assets/images/logo.png'),
+  },
+  {
+    id: 2,
+    image: require('./src/assets/images/eukaliptus.png'),
+  },
+];

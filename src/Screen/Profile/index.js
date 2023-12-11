@@ -5,18 +5,32 @@ import {
   View,
   TouchableOpacity,
   Image,
-  RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import {LogoutCurve, Setting2, Tree, AddSquare} from 'iconsax-react-native';
-import React, {useState, useCallback} from 'react';
+import React, {useRef} from 'react';
 import {fontType, colors} from '../../assets/theme';
 import {ProfileData} from '../../../data';
-import axios from 'axios';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import ActionSheet from 'react-native-actions-sheet';
+import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = () => {
+  const actionSheetRef = useRef(null);
+  const closeActionSheet = () => {
+    actionSheetRef.current?.hide();
+  };
   const navigation = useNavigation();
+  const handleLogout = async () => {
+    try {
+      closeActionSheet();
+      await auth().signOut();
+      await AsyncStorage.removeItem('userData');
+      navigation.replace('Login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -67,7 +81,7 @@ const Profile = () => {
           </View>
         </View>
         <View style={{gap: 5, alignItems: 'center'}}>
-          <TouchableOpacity style={profile.buttonLogout}>
+          <TouchableOpacity style={profile.buttonLogout} onPress={handleLogout}>
             <LogoutCurve size="25" color={colors.white()} variant="Broken" />
             <Text style={profile.buttonText}>Log Out</Text>
           </TouchableOpacity>
@@ -78,6 +92,50 @@ const Profile = () => {
         onPress={() => navigation.navigate('AddFlower')}>
         <AddSquare color={colors.white()} variant="Linear" size={20} />
       </TouchableOpacity>
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+        }}
+        indicatorStyle={{
+          width: 100,
+        }}
+        gestureEnabled={true}
+        defaultOverlayOpacity={0.3}>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={handleLogout}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
+              fontSize: 18,
+            }}>
+            Log out
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={closeActionSheet}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: 'red',
+              fontSize: 18,
+            }}>
+            Cancel
+          </Text>
+        </TouchableOpacity>
+      </ActionSheet>
     </View>
   );
 };

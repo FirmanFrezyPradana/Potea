@@ -15,6 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import FastImage from 'react-native-fast-image';
+import auth from '@react-native-firebase/auth';
 
 const AddFlowerForm = () => {
   const dataCategory = [
@@ -54,6 +55,7 @@ const AddFlowerForm = () => {
 
     setLoading(true);
     try {
+      const authorId = auth().currentUser.uid;
       await reference.putFile(image);
       const url = await reference.getDownloadURL();
       await firestore().collection('flower').add({
@@ -65,6 +67,7 @@ const AddFlowerForm = () => {
         description: FlowerData.description,
         image: url,
         createdAt: new Date(),
+        authorId
       });
       setLoading(false);
       console.log('flower added!');
